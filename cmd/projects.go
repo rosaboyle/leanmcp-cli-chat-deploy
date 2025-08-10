@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/fatih/color"
 	"github.com/spf13/cobra"
@@ -23,14 +24,16 @@ var projectsListCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := getAuthenticatedClient()
 		if err != nil {
-			return err
+			handleAuthError()
+			return nil
 		}
 
 		fmt.Println("📋 Fetching projects...")
 
 		projects, err := client.ListProjects()
 		if err != nil {
-			return fmt.Errorf("failed to list projects: %v", err)
+			handleAPIError(err, "list projects")
+			return nil // Return nil to prevent usage help from showing
 		}
 
 		fmt.Printf("\nFound %d project(s):\n\n", len(projects))
@@ -56,7 +59,8 @@ var projectsShowCmd = &cobra.Command{
 
 		project, err := client.GetProject(projectID)
 		if err != nil {
-			return fmt.Errorf("failed to get project: %v", err)
+			handleAPIError(err, "get project details")
+			return nil
 		}
 
 		display.PrintProject(project)
@@ -197,6 +201,39 @@ func getAuthenticatedClient() (*api.Client, error) {
 	}
 
 	return api.NewClient(creds.APIKey), nil
+}
+
+// handleAuthError handles authentication errors with user-friendly messages
+func handleAuthError() {
+	fmt.Printf("❌ %s\n", color.RedString("Not authenticated"))
+	fmt.Printf("Please run: %s\n", color.CyanString("leanmcp-cli auth login --api-key <your-key>"))
+}
+
+// handleAPIError provides user-friendly error messages for common API errors
+func handleAPIError(err error, action string) {
+	if strings.Contains(err.Error(), "status 401") {
+		fmt.Printf("❌ %s\n", color.RedString("Authentication failed"))
+		fmt.Printf("Your API key is invalid or has expired.\n")
+		fmt.Printf("Please run: %s\n", color.CyanString("leanmcp-cli auth login --api-key <your-key>"))
+		return
+	}
+	if strings.Contains(err.Error(), "status 403") {
+		fmt.Printf("❌ %s\n", color.RedString("Access denied"))
+		fmt.Printf("Your API key doesn't have permission to %s.\n", action)
+		return
+	}
+	if strings.Contains(err.Error(), "status 404") {
+		fmt.Printf("❌ %s\n", color.RedString("Not found"))
+		fmt.Printf("The requested resource was not found.\n")
+		return
+	}
+	if strings.Contains(err.Error(), "connection failed") {
+		fmt.Printf("❌ %s\n", color.RedString("Connection failed"))
+		fmt.Printf("Unable to connect to the API. Please check your internet connection.\n")
+		return
+	}
+	// Generic error for other cases
+	fmt.Printf("❌ %s: %v\n", color.RedString("Error"), err)
 }
 
 func init() {
