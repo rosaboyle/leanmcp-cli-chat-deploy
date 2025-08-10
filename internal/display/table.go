@@ -18,16 +18,21 @@ func ProjectsTable(projects []api.Project) {
 	}
 
 	table := tablewriter.NewWriter(os.Stdout)
-	table.SetHeader([]string{"ID", "Name", "Status", "Created", "Updated"})
+	table.SetHeader([]string{"ID", "Name", "Framework", "Status", "Created", "Updated"})
 	table.SetBorder(false)
 	table.SetHeaderAlignment(tablewriter.ALIGN_LEFT)
 	table.SetAlignment(tablewriter.ALIGN_LEFT)
 
 	for _, project := range projects {
 		status := colorizeStatus(project.Status)
+		framework := project.Framework
+		if framework == "" {
+			framework = "-"
+		}
 		table.Append([]string{
 			project.ID[:8] + "...", // Truncate ID for readability
 			project.Name,
+			framework,
 			status,
 			project.CreatedAt.Format("2006-01-02 15:04"),
 			project.UpdatedAt.Format("2006-01-02 15:04"),
@@ -121,6 +126,16 @@ func PrintProject(project *api.Project) {
 	if project.Description != "" {
 		fmt.Printf("%s %s\n", color.CyanString("Description:"), project.Description)
 	}
+	if project.Framework != "" {
+		fmt.Printf("%s %s\n", color.CyanString("Framework:"), project.Framework)
+	}
+	if project.RepositoryURL != "" {
+		fmt.Printf("%s %s\n", color.CyanString("Repository:"), project.RepositoryURL)
+	}
+	if project.S3Location != "" {
+		fmt.Printf("%s %s\n", color.CyanString("S3 Location:"), project.S3Location)
+	}
+	fmt.Printf("%s %s\n", color.CyanString("User ID:"), project.UserID)
 	fmt.Printf("%s %s\n", color.CyanString("Created:"), project.CreatedAt.Format("2006-01-02 15:04:05"))
 	fmt.Printf("%s %s\n", color.CyanString("Updated:"), project.UpdatedAt.Format("2006-01-02 15:04:05"))
 }

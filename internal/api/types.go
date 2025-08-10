@@ -14,13 +14,17 @@ type APIKeyInfo struct {
 
 // Project represents a project
 type Project struct {
-	ID          string    `json:"id"`
-	Name        string    `json:"name"`
-	Description string    `json:"description,omitempty"`
-	Status      string    `json:"status"`
-	CreatedAt   time.Time `json:"createdAt"`
-	UpdatedAt   time.Time `json:"updatedAt"`
-	UserID      string    `json:"userId"`
+	ID            string    `json:"id"`
+	Name          string    `json:"name"`
+	Description   string    `json:"description,omitempty"`
+	Status        string    `json:"status"`
+	Framework     string    `json:"framework,omitempty"`
+	RepositoryURL string    `json:"repositoryUrl,omitempty"`
+	S3Location    string    `json:"s3Location,omitempty"`
+	FirebaseUID   string    `json:"firebaseUid,omitempty"`
+	CreatedAt     time.Time `json:"createdAt"`
+	UpdatedAt     time.Time `json:"updatedAt"`
+	UserID        string    `json:"userId"`
 }
 
 // Chat represents a chat conversation

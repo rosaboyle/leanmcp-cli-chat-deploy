@@ -11,7 +11,6 @@ import (
 
 var (
 	cfgFile string
-	baseURL string
 	verbose bool
 )
 
@@ -43,8 +42,6 @@ func init() {
 	// Global flags
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "",
 		"config file (default is $HOME/.leanmcp-cli/config.yaml)")
-	rootCmd.PersistentFlags().StringVar(&baseURL, "base-url", "",
-		"API base URL (default: https://api.leanmcp.ai)")
 	rootCmd.PersistentFlags().BoolVarP(&verbose, "verbose", "v", false,
 		"verbose output")
 

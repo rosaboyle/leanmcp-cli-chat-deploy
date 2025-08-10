@@ -196,7 +196,7 @@ func getAuthenticatedClient() (*api.Client, error) {
 		return nil, fmt.Errorf("not authenticated. Run 'leanmcp-cli auth login --api-key <your-key>' first")
 	}
 
-	return api.NewClient(creds.APIKey, baseURL), nil
+	return api.NewClient(creds.APIKey), nil
 }
 
 func init() {

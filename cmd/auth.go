@@ -111,10 +111,9 @@ var statusCmd = &cobra.Command{
 
 		fmt.Println("🔍 Testing API connection...")
 
-		client := api.NewClient(creds.APIKey, baseURL)
-		
-		// Test basic connection
-		if err := client.TestConnection(); err != nil {
+		client := api.NewClient(creds.APIKey)
+		err = client.TestConnection()
+		if err != nil {
 			fmt.Printf("❌ %s: %v\n", color.RedString("Connection failed"), err)
 			return nil
 		}

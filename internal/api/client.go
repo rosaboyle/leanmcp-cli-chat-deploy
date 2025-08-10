@@ -17,10 +17,9 @@ type Client struct {
 }
 
 // NewClient creates a new API client
-func NewClient(apiKey, baseURL string) *Client {
-	if baseURL == "" {
-		baseURL = "https://api.leanmcp.ai" // Default API URL
-	}
+func NewClient(apiKey string) *Client {
+	// Hardcoded base URL - never changes
+	baseURL := "https://join-us.cracked-devs.link"
 
 	return &Client{
 		apiKey:  apiKey,
