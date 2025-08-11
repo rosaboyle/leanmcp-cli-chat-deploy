@@ -13,11 +13,8 @@ var (
 	cfgFile string
 	verbose bool
 	
-	// Version information - can be set at build time with ldflags
-	Version   = "dev"
-	Commit    = "unknown"
-	BuildDate = "unknown"
-	BuiltBy   = "unknown"
+	// Version information
+	Version = "0.1.0"
 )
 
 var rootCmd = &cobra.Command{

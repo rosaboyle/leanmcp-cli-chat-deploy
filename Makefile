@@ -11,6 +11,13 @@ build:
 	go build -o leanmcp-cli .
 	@echo "✅ Build complete!"
 
+# Build with custom version
+build-version:
+	@echo "🔨 Building LeanMCP CLI with version $(VERSION)..."
+	@if [ -z "$(VERSION)" ]; then echo "Error: VERSION not set. Use: make build-version VERSION=1.0.0"; exit 1; fi
+	go build -ldflags "-X 'github.com/ddod/leanmcp-cli/cmd.Version=$(VERSION)'" -o leanmcp-cli .
+	@echo "✅ Build complete! Version: $(VERSION)"
+
 # Clean build artifacts
 clean:
 	@echo "🧹 Cleaning..."
