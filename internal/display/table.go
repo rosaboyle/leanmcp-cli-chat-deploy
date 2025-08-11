@@ -132,9 +132,6 @@ func PrintProject(project *api.Project) {
 	if project.RepositoryURL != "" {
 		fmt.Printf("%s %s\n", color.CyanString("Repository:"), project.RepositoryURL)
 	}
-	if project.S3Location != "" {
-		fmt.Printf("%s %s\n", color.CyanString("S3 Location:"), project.S3Location)
-	}
 	fmt.Printf("%s %s\n", color.CyanString("User ID:"), project.UserID)
 	fmt.Printf("%s %s\n", color.CyanString("Created:"), project.CreatedAt.Format("2006-01-02 15:04:05"))
 	fmt.Printf("%s %s\n", color.CyanString("Updated:"), project.UpdatedAt.Format("2006-01-02 15:04:05"))

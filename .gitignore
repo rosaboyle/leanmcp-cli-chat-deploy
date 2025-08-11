@@ -13,6 +13,9 @@
 *-amd64
 *-arm64
 
+.leanmcp/
+config.json
+mcli
 # LeanMCP CLI specific
 leanmcp-cli
 leanmcp-cli-*

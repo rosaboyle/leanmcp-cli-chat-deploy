@@ -25,7 +25,7 @@ cp TAP_README.md homebrew-mcli/README.md
 cd homebrew-mcli
 git add .
 git config user.name "rosaboyle" 2>/dev/null || echo "Git user already configured"
-git config user.email "rosa@example.com" 2>/dev/null || echo "Git email already configured"
+git config user.email "helloworldcmu@gmail.com" 2>/dev/null || echo "Git email already configured"
 git commit -m "Add mcli formula v$(grep 'version' ../mcli.rb | sed 's/.*"\(.*\)".*/\1/')"
 git push
 
