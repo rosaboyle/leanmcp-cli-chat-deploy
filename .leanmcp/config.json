@@ -1,18 +1,18 @@
 {
   "project": {
-    "id": "8d38a4f7-d3d6-451a-9130-e4bbbb43e2d9",
-    "name": "3derd3rdf",
-    "description": "3rd3rfd3fd",
+    "id": "2ef46011-a520-4d05-bf9a-e18422f791cb",
+    "name": "dheerajpai",
+    "description": "weded",
     "framework": "",
     "status": "active",
-    "s3Location": "s3://s3-mcp-dev/1f04e1ec-8ff0-4bd6-8195-e58f0dd57326/8d38a4f7-d3d6-451a-9130-e4bbbb43e2d9/9c5d924a-project.zip",
+    "s3Location": "s3://s3-mcp-dev/1f04e1ec-8ff0-4bd6-8195-e58f0dd57326/2ef46011-a520-4d05-bf9a-e18422f791cb/7d5eaf8c-project.zip",
     "repositoryUrl": "",
-    "createdAt": "2025-08-11T03:37:46Z",
-    "updatedAt": "2025-08-11T03:37:46Z"
+    "createdAt": "2025-08-11T19:36:51Z",
+    "updatedAt": "2025-08-11T19:36:51Z"
   },
   "cli": {
     "version": "1.0.0",
-    "lastSync": "2025-08-10T20:37:46-07:00",
+    "lastSync": "2025-08-11T12:36:51-07:00",
     "projectPath": "/Users/ddod/PersonalCode/AIRTRAIN/ORIGINAL/LEANMCP_CLI/golang-cli-chat-deploy"
   }
 }

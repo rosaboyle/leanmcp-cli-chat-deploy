@@ -100,22 +100,7 @@ The command will:
 		description, _ := cmd.Flags().GetString("description")
 		projectPath, _ := cmd.Flags().GetString("path")
 
-		// Create progress tracker
-		steps := []string{
-			"Collect project information",
-			"Create project record",
-			"Scan and zip files",
-			"Upload to S3",
-			"Update project record",
-			"Save local configuration",
-		}
-		
-		progress := interactive.NewProgressTracker(steps)
-		progress.Start()
-
-		// Step 1: Collect project information
-		progress.StartStep(0, "Gathering project details...")
-		
+		// Collect project information
 		flow := &interactive.ProjectCreationFlow{
 			Name:        name,
 			Description: description,
@@ -124,15 +109,11 @@ The command will:
 
 		err = flow.CollectProjectInfo()
 		if err != nil {
-			progress.FailStep(0, err)
-			progress.Finish(false)
 			return err
 		}
-		
-		progress.CompleteStep(0)
 
-		// Step 2: Create project record
-		progress.StartStep(1, fmt.Sprintf("Creating project '%s'...", flow.Name))
+		// Create project record
+		fmt.Printf("Creating project '%s'...\n", flow.Name)
 		
 		createReq := api.CreateProjectRequest{
 			Name:        flow.Name,
@@ -141,80 +122,54 @@ The command will:
 
 		project, err := client.CreateProject(createReq)
 		if err != nil {
-			progress.FailStep(1, err)
-			progress.Finish(false)
 			return fmt.Errorf("failed to create project: %w", err)
 		}
-		
-		progress.CompleteStep(1)
 
-		// Step 3: Scan and zip files
-		progress.StartStep(2, fmt.Sprintf("Zipping %d files...", flow.Stats.TotalFiles))
+		// Scan and zip files
+		fmt.Printf("Processing %d files...\n", flow.Stats.TotalFiles)
 		
 		zipper := filesystem.NewProjectZipper(flow.Path)
 		zipResult, err := zipper.CreateZip()
 		if err != nil {
-			progress.FailStep(2, err)
-			progress.Finish(false)
 			return fmt.Errorf("failed to create zip: %w", err)
 		}
 
 		// Validate zip size
 		err = filesystem.ValidateZipSize(zipResult.Data)
 		if err != nil {
-			progress.FailStep(2, err)
-			progress.Finish(false)
 			return fmt.Errorf("zip validation failed: %w", err)
 		}
-		
-		progress.CompleteStep(2)
 
-		// Step 4: Upload to S3
-		progress.StartStep(3, "Getting upload URL...")
+		// Upload to S3
+		fmt.Println("Uploading files...")
 		
 		uploadResp, err := client.GetUploadURL(project.ID, "project.zip", int64(len(zipResult.Data)))
 		if err != nil {
-			progress.FailStep(3, err)
-			progress.Finish(false)
 			return fmt.Errorf("failed to get upload URL: %w", err)
 		}
 
-		progress.StartStep(3, "Uploading to S3...")
 		err = client.UploadToS3(uploadResp.URL, zipResult.Data)
 		if err != nil {
-			progress.FailStep(3, err)
-			progress.Finish(false)
 			return fmt.Errorf("failed to upload to S3: %w", err)
 		}
-		
-		progress.CompleteStep(3)
 
-		// Step 5: Update project record
-		progress.StartStep(4, "Updating project record...")
-		
+		// Update project record
 		updatedProject, err := client.UpdateS3Location(project.ID, uploadResp.S3Location)
 		if err != nil {
-			progress.FailStep(4, err)
-			progress.Finish(false)
 			return fmt.Errorf("failed to update S3 location: %w", err)
 		}
-		
-		progress.CompleteStep(4)
 
-		// Step 6: Save local configuration
-		progress.StartStep(5, "Saving local configuration...")
-		
+		// Save local configuration
 		err = config.SaveProjectConfig(flow.Path, updatedProject)
 		if err != nil {
-			progress.FailStep(5, err)
-			progress.Finish(false)
 			return fmt.Errorf("failed to save local config: %w", err)
 		}
-		
-		progress.CompleteStep(5)
 
-		// Finish successfully
-		progress.Finish(true)
+		// Success
+		fmt.Printf("\n✅ Project '%s' created successfully!\n", flow.Name)
+		fmt.Println("\nNext steps:")
+		fmt.Println("  leanmcp-cli build")
+		fmt.Println("  leanmcp-cli deploy")
 
 		// Show project summary
 		fmt.Println("\n" + color.GreenString("Project Details:"))
