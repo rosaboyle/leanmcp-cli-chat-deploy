@@ -1,0 +1,113 @@
+name: Dual Repository Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.21'
+    
+    - name: Extract version
+      id: version
+      run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+    
+    - name: Build for macOS AMD64
+      run: |
+        GOOS=darwin GOARCH=amd64 go build -ldflags="-X 'main.Version=${{ steps.version.outputs.VERSION }}'" -o mcli-darwin-amd64 ./cmd
+    
+    - name: Build for macOS ARM64
+      run: |
+        GOOS=darwin GOARCH=arm64 go build -ldflags="-X 'main.Version=${{ steps.version.outputs.VERSION }}'" -o mcli-darwin-arm64 ./cmd
+    
+    - name: Package releases
+      run: |
+        tar -czf mcli-${{ steps.version.outputs.VERSION }}-darwin-amd64.tar.gz mcli-darwin-amd64
+        tar -czf mcli-${{ steps.version.outputs.VERSION }}-darwin-arm64.tar.gz mcli-darwin-arm64
+    
+    - name: Calculate checksums
+      id: checksums
+      run: |
+        SHA256_AMD64=$(sha256sum mcli-${{ steps.version.outputs.VERSION }}-darwin-amd64.tar.gz | cut -d' ' -f1)
+        SHA256_ARM64=$(sha256sum mcli-${{ steps.version.outputs.VERSION }}-darwin-arm64.tar.gz | cut -d' ' -f1)
+        echo "SHA256_AMD64=${SHA256_AMD64}" >> $GITHUB_OUTPUT
+        echo "SHA256_ARM64=${SHA256_ARM64}" >> $GITHUB_OUTPUT
+    
+    - name: Create release in public repository
+      uses: softprops/action-gh-release@v1
+      with:
+        repository: rosaboyle/mcli-releases
+        tag_name: v${{ steps.version.outputs.VERSION }}
+        name: Release v${{ steps.version.outputs.VERSION }}
+        body: |
+          # MCLI v${{ steps.version.outputs.VERSION }}
+          
+          ## Installation
+          
+          ### Homebrew (Recommended)
+          ```bash
+          brew tap rosaboyle/mcli
+          brew install mcli
+          ```
+          
+          ### Manual Installation
+          Download the appropriate binary for your system:
+          - macOS Intel: `mcli-${{ steps.version.outputs.VERSION }}-darwin-amd64.tar.gz`
+          - macOS Apple Silicon: `mcli-${{ steps.version.outputs.VERSION }}-darwin-arm64.tar.gz`
+          
+          ## Usage
+          ```bash
+          mcli --help
+          mcli version
+          ```
+        files: |
+          mcli-${{ steps.version.outputs.VERSION }}-darwin-amd64.tar.gz
+          mcli-${{ steps.version.outputs.VERSION }}-darwin-arm64.tar.gz
+        token: ${{ secrets.RELEASE_TOKEN }}
+    
+    - name: Generate Homebrew Formula
+      run: |
+        cat > mcli.rb << EOF
+        class Mcli < Formula
+          desc "LeanMCP CLI - Manage projects and chats"
+          homepage "https://github.com/rosaboyle/mcli-releases"
+          version "${{ steps.version.outputs.VERSION }}"
+
+          if OS.mac? && Hardware::CPU.arm?
+            url "https://github.com/rosaboyle/mcli-releases/releases/download/v${{ steps.version.outputs.VERSION }}/mcli-${{ steps.version.outputs.VERSION }}-darwin-arm64.tar.gz"
+            sha256 "${{ steps.checksums.outputs.SHA256_ARM64 }}"
+          elsif OS.mac? && Hardware::CPU.intel?
+            url "https://github.com/rosaboyle/mcli-releases/releases/download/v${{ steps.version.outputs.VERSION }}/mcli-${{ steps.version.outputs.VERSION }}-darwin-amd64.tar.gz"
+            sha256 "${{ steps.checksums.outputs.SHA256_AMD64 }}"
+          end
+
+          def install
+            bin.install "mcli-darwin-arm64" => "mcli" if OS.mac? && Hardware::CPU.arm?
+            bin.install "mcli-darwin-amd64" => "mcli" if OS.mac? && Hardware::CPU.intel?
+          end
+
+          test do
+            system "#{bin}/mcli", "version"
+          end
+        end
+        EOF
+    
+    - name: Update Homebrew tap
+      uses: dmnemec/copy_file_to_another_repo_action@main
+      env:
+        API_TOKEN_GITHUB: ${{ secrets.RELEASE_TOKEN }}
+      with:
+        source_file: mcli.rb
+        destination_repo: rosaboyle/homebrew-mcli
+        destination_folder: .
+        user_email: action@github.com
+        user_name: GitHub Action
+        commit_message: Update formula to v${{ steps.version.outputs.VERSION }}
