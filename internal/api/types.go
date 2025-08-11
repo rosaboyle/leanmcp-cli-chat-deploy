@@ -76,6 +76,24 @@ type CreateProjectRequest struct {
 	Description string `json:"description,omitempty"`
 }
 
+// UploadURLRequest represents a request to get an upload URL
+type UploadURLRequest struct {
+	FileName string `json:"fileName"`
+	FileType string `json:"fileType"`
+	FileSize int64  `json:"fileSize"`
+}
+
+// UploadURLResponse represents the response from upload URL request
+type UploadURLResponse struct {
+	URL        string `json:"url"`
+	S3Location string `json:"s3Location"`
+}
+
+// UpdateS3LocationRequest represents a request to update S3 location
+type UpdateS3LocationRequest struct {
+	S3Location string `json:"s3Location"`
+}
+
 // CreateChatRequest represents a request to create a chat
 type CreateChatRequest struct {
 	Title     string `json:"title"`

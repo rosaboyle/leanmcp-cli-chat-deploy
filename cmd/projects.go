@@ -4,11 +4,14 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/ddod/leanmcp-cli/internal/api"
+	"github.com/ddod/leanmcp-cli/internal/config"
+	"github.com/ddod/leanmcp-cli/internal/display"
+	"github.com/ddod/leanmcp-cli/internal/filesystem"
+	"github.com/ddod/leanmcp-cli/internal/interactive"
+	"github.com/ddod/leanmcp-cli/internal/auth"
 	"github.com/fatih/color"
 	"github.com/spf13/cobra"
-	"github.com/ddod/leanmcp-cli/internal/auth"
-	"github.com/ddod/leanmcp-cli/internal/api"
-	"github.com/ddod/leanmcp-cli/internal/display"
 )
 
 var projectsCmd = &cobra.Command{
@@ -72,34 +75,150 @@ var projectsShowCmd = &cobra.Command{
 var projectsCreateCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Create a new project",
-	Long:  "Create a new project with the specified name and optional description",
+	Long: `Create a new project and upload files from a directory.
+
+Supports both interactive and flag-based modes:
+- Interactive mode: Run without flags to be prompted for all details
+- Flag mode: Use --name, --description, and --path flags
+- Partial flags: Provide some flags, be prompted for missing ones
+
+The command will:
+1. Create a project record in LeanMCP
+2. Scan the specified directory (respecting .gitignore)
+3. Create a zip archive of the project files
+4. Upload the zip to S3
+5. Update the project with the S3 location
+6. Save local configuration in .leanmcp/config.json`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := getAuthenticatedClient()
 		if err != nil {
 			return err
 		}
 
+		// Get command line flags
 		name, _ := cmd.Flags().GetString("name")
 		description, _ := cmd.Flags().GetString("description")
+		projectPath, _ := cmd.Flags().GetString("path")
 
-		if name == "" {
-			return fmt.Errorf("--name is required")
+		// Create progress tracker
+		steps := []string{
+			"Collect project information",
+			"Create project record",
+			"Scan and zip files",
+			"Upload to S3",
+			"Update project record",
+			"Save local configuration",
 		}
+		
+		progress := interactive.NewProgressTracker(steps)
+		progress.Start()
 
-		fmt.Printf("🚀 Creating project '%s'...\n", name)
-
-		req := api.CreateProjectRequest{
+		// Step 1: Collect project information
+		progress.StartStep(0, "Gathering project details...")
+		
+		flow := &interactive.ProjectCreationFlow{
 			Name:        name,
 			Description: description,
+			Path:        projectPath,
 		}
 
-		project, err := client.CreateProject(req)
+		err = flow.CollectProjectInfo()
 		if err != nil {
-			return fmt.Errorf("failed to create project: %v", err)
+			progress.FailStep(0, err)
+			progress.Finish(false)
+			return err
+		}
+		
+		progress.CompleteStep(0)
+
+		// Step 2: Create project record
+		progress.StartStep(1, fmt.Sprintf("Creating project '%s'...", flow.Name))
+		
+		createReq := api.CreateProjectRequest{
+			Name:        flow.Name,
+			Description: flow.Description,
 		}
 
-		fmt.Printf("✅ %s\n\n", color.GreenString("Project created successfully!"))
-		display.PrintProject(project)
+		project, err := client.CreateProject(createReq)
+		if err != nil {
+			progress.FailStep(1, err)
+			progress.Finish(false)
+			return fmt.Errorf("failed to create project: %w", err)
+		}
+		
+		progress.CompleteStep(1)
+
+		// Step 3: Scan and zip files
+		progress.StartStep(2, fmt.Sprintf("Zipping %d files...", flow.Stats.TotalFiles))
+		
+		zipper := filesystem.NewProjectZipper(flow.Path)
+		zipResult, err := zipper.CreateZip()
+		if err != nil {
+			progress.FailStep(2, err)
+			progress.Finish(false)
+			return fmt.Errorf("failed to create zip: %w", err)
+		}
+
+		// Validate zip size
+		err = filesystem.ValidateZipSize(zipResult.Data)
+		if err != nil {
+			progress.FailStep(2, err)
+			progress.Finish(false)
+			return fmt.Errorf("zip validation failed: %w", err)
+		}
+		
+		progress.CompleteStep(2)
+
+		// Step 4: Upload to S3
+		progress.StartStep(3, "Getting upload URL...")
+		
+		uploadResp, err := client.GetUploadURL(project.ID, "project.zip", int64(len(zipResult.Data)))
+		if err != nil {
+			progress.FailStep(3, err)
+			progress.Finish(false)
+			return fmt.Errorf("failed to get upload URL: %w", err)
+		}
+
+		progress.StartStep(3, "Uploading to S3...")
+		err = client.UploadToS3(uploadResp.URL, zipResult.Data)
+		if err != nil {
+			progress.FailStep(3, err)
+			progress.Finish(false)
+			return fmt.Errorf("failed to upload to S3: %w", err)
+		}
+		
+		progress.CompleteStep(3)
+
+		// Step 5: Update project record
+		progress.StartStep(4, "Updating project record...")
+		
+		updatedProject, err := client.UpdateS3Location(project.ID, uploadResp.S3Location)
+		if err != nil {
+			progress.FailStep(4, err)
+			progress.Finish(false)
+			return fmt.Errorf("failed to update S3 location: %w", err)
+		}
+		
+		progress.CompleteStep(4)
+
+		// Step 6: Save local configuration
+		progress.StartStep(5, "Saving local configuration...")
+		
+		err = config.SaveProjectConfig(flow.Path, updatedProject)
+		if err != nil {
+			progress.FailStep(5, err)
+			progress.Finish(false)
+			return fmt.Errorf("failed to save local config: %w", err)
+		}
+		
+		progress.CompleteStep(5)
+
+		// Finish successfully
+		progress.Finish(true)
+
+		// Show project summary
+		fmt.Println("\n" + color.GreenString("Project Details:"))
+		display.PrintProject(updatedProject)
 
 		return nil
 	},
@@ -246,9 +365,10 @@ func init() {
 	projectsCmd.AddCommand(projectsBuildCmd)
 
 	// Create command flags
-	projectsCreateCmd.Flags().String("name", "", "Project name (required)")
-	projectsCreateCmd.Flags().String("description", "", "Project description")
-	projectsCreateCmd.MarkFlagRequired("name")
+	projectsCreateCmd.Flags().StringP("name", "n", "", "Project name")
+	projectsCreateCmd.Flags().StringP("description", "d", "", "Project description")
+	projectsCreateCmd.Flags().StringP("path", "p", "", "Path to project directory (defaults to current directory)")
+	// Note: name is no longer required - interactive mode will prompt if missing
 
 	// Delete command flags
 	projectsDeleteCmd.Flags().Bool("force", false, "Force deletion without confirmation")
