@@ -14,7 +14,7 @@ var (
 	verbose bool
 	
 	// Version information
-	Version = "0.1.0"
+	Version = "1.0.1"
 )
 
 var rootCmd = &cobra.Command{
