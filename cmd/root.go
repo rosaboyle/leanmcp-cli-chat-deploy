@@ -12,11 +12,18 @@ import (
 var (
 	cfgFile string
 	verbose bool
+	
+	// Version information - can be set at build time with ldflags
+	Version   = "dev"
+	Commit    = "unknown"
+	BuildDate = "unknown"
+	BuiltBy   = "unknown"
 )
 
 var rootCmd = &cobra.Command{
-	Use:   "leanmcp-cli",
-	Short: "CLI for interacting with LeanMCP APIs",
+	Use:     "leanmcp-cli",
+	Version: Version,
+	Short:   "CLI for interacting with LeanMCP APIs",
 	Long: `A command-line interface for managing your LeanMCP projects, 
 chats, deployments, and API keys.
 
