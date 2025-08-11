@@ -11,7 +11,7 @@ var versionCmd = &cobra.Command{
 	Short: "Show version information",
 	Long:  "Display version information",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Printf("leanmcp-cli version %s\n", Version)
+		fmt.Printf("mcli version %s\n", Version)
 	},
 }
 
