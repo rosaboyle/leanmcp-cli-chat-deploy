@@ -1,4 +1,4 @@
-# MCLI - LeanMCP CLI Makefile
+# LeanMCP CLI Makefile
 # Build targets for Homebrew distribution
 
 .PHONY: build clean install test help run release
@@ -9,17 +9,17 @@ VERSION ?= 1.0.0
 # Default target
 all: build
 
-# Build the CLI as mcli
+# Build the CLI as leanmcp
 build:
-	@echo "🔨 Building mcli..."
-	go build -ldflags "-X 'github.com/ddod/leanmcp-cli/cmd.Version=$(VERSION)'" -o mcli .
+	@echo "🔨 Building leanmcp..."
+	go build -ldflags "-X 'github.com/ddod/leanmcp-cli/cmd.Version=$(VERSION)'" -o leanmcp .
 	@echo "✅ Build complete! Version: $(VERSION)"
 
 # Clean build artifacts
 clean:
 	@echo "🧹 Cleaning..."
-	rm -f mcli
-	rm -f mcli-*
+	rm -f leanmcp
+	rm -f leanmcp-*
 	rm -f *.tar.gz
 	@echo "✅ Clean complete!"
 
@@ -38,34 +38,34 @@ test:
 # Build for Homebrew (macOS architectures)
 build-homebrew: clean
 	@echo "🍺 Building for Homebrew (macOS only)..."
-	GOOS=darwin GOARCH=amd64 go build -ldflags "-X 'github.com/ddod/leanmcp-cli/cmd.Version=$(VERSION)'" -o mcli-darwin-amd64 .
-	GOOS=darwin GOARCH=arm64 go build -ldflags "-X 'github.com/ddod/leanmcp-cli/cmd.Version=$(VERSION)'" -o mcli-darwin-arm64 .
+	GOOS=darwin GOARCH=amd64 go build -ldflags "-X 'github.com/ddod/leanmcp-cli/cmd.Version=$(VERSION)'" -o leanmcp-darwin-amd64 .
+	GOOS=darwin GOARCH=arm64 go build -ldflags "-X 'github.com/ddod/leanmcp-cli/cmd.Version=$(VERSION)'" -o leanmcp-darwin-arm64 .
 	@echo "✅ Homebrew builds complete!"
 
 # Create release packages
 release: build-homebrew
 	@echo "📦 Creating release packages..."
-	tar -czf mcli-$(VERSION)-darwin-amd64.tar.gz mcli-darwin-amd64
-	tar -czf mcli-$(VERSION)-darwin-arm64.tar.gz mcli-darwin-arm64
+	tar -czf leanmcp-$(VERSION)-darwin-amd64.tar.gz leanmcp-darwin-amd64
+	tar -czf leanmcp-$(VERSION)-darwin-arm64.tar.gz leanmcp-darwin-arm64
 	@echo "✅ Release packages created:"
-	@ls -la mcli-$(VERSION)-*.tar.gz
+	@ls -la leanmcp-$(VERSION)-*.tar.gz
 
 # Development run
 run: build
-	@echo "🚀 Running mcli..."
-	./mcli
+	@echo "🚀 Running leanmcp..."
+	./leanmcp
 
 # Show help
 help:
-	@echo "MCLI Development Commands:"
+	@echo "LeanMCP CLI Development Commands:"
 	@echo ""
-	@echo "  build           - Build mcli binary"
+	@echo "  build           - Build leanmcp binary"
 	@echo "  clean           - Clean build artifacts"
 	@echo "  install         - Install Go dependencies"
 	@echo "  test            - Run tests"
 	@echo "  build-homebrew  - Build for macOS (Intel + Apple Silicon)"
 	@echo "  release         - Create release packages for Homebrew"
-	@echo "  run             - Build and run mcli"
+	@echo "  run             - Build and run leanmcp"
 	@echo "  help            - Show this help"
 	@echo ""
 	@echo "Example usage:"
