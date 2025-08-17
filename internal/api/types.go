@@ -106,3 +106,40 @@ type ErrorResponse struct {
 	Message string `json:"message"`
 	Status  int    `json:"status"`
 }
+
+// DeployStreamRequest represents a request for end-to-end deployment streaming
+type DeployStreamRequest struct {
+	ProjectID     string   `json:"projectId"`
+	ContainerPort int      `json:"containerPort,omitempty"`
+	SecretIDs     []string `json:"secretIds,omitempty"`
+}
+
+// StreamUpdate represents a single update from the deployment stream
+type StreamUpdate struct {
+	Type                    string `json:"type"`                    // "progress", "log", "error", "complete"
+	DeploymentID            string `json:"deploymentId,omitempty"`
+	CurrentStep             string `json:"currentStep,omitempty"`
+	BuildID                 string `json:"buildId,omitempty"`
+	BuildStatus             string `json:"buildStatus,omitempty"`
+	Progress                float64 `json:"progress,omitempty"`
+	EstimatedTimeRemaining  int     `json:"estimatedTimeRemaining,omitempty"`
+	Message                 string  `json:"message,omitempty"`
+	Error                   string  `json:"error,omitempty"`
+	DeploymentURL           string  `json:"deploymentUrl,omitempty"`
+}
+
+// EndToEndDeploymentResponse represents the final deployment response
+type EndToEndDeploymentResponse struct {
+	DeploymentID  string `json:"deploymentId"`
+	DeploymentURL string `json:"deploymentUrl"`
+	BuildID       string `json:"buildId"`
+	BuildStatus   string `json:"buildStatus"`
+	Error         string `json:"error,omitempty"`
+}
+
+// BuildLogsResponse represents build logs from the server
+type BuildLogsResponse struct {
+	BuildID string   `json:"buildId"`
+	Logs    []string `json:"logs"`
+	Error   string   `json:"error,omitempty"`
+}
