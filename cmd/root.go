@@ -18,13 +18,13 @@ var (
 )
 
 var rootCmd = &cobra.Command{
-	Use:     "mcli",
+	Use:     "leanmcp",
 	Version: Version,
 	Short:   "CLI for interacting with LeanMCP APIs",
 	Long: `A command-line interface for managing your LeanMCP projects, 
 chats, deployments, and API keys.
 
-MCLI provides a simple way to interact with LeanMCP services from the command line.`,
+LeanMCP CLI provides a simple way to interact with LeanMCP services from the command line.`,
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
 		// Initialize configuration
 		if err := config.Initialize(cfgFile); err != nil && verbose {
