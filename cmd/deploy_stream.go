@@ -190,19 +190,19 @@ func createProgressBar(progress int) string {
 func getStepIcon(step string) string {
 	switch strings.ToUpper(step) {
 	case "BUILDING", "BUILD":
-		return "BUILDING"
+		return "BUILD"
 	case "CONTAINERIZING", "CONTAINER":
-		return "CONTAINERIZING"
+		return "CONTAINER"
 	case "DEPLOYING", "DEPLOY":
-		return "DEPLOYING"
-	case "CONFIGURING", "CONFIG":
-		return "CONFIGURING"
-	case "TESTING", "TEST":
-		return "TESTING"
+		return "DEPLOY"
+	case "CONFIGURING", "CONFIG", "CONFIGURING_DOMAIN":
+		return "CONFIG"
+	case "TESTING", "TEST", "VERIFYING_HEALTH", "VERIFYING":
+		return "VERIFY"
 	case "COMPLETED", "COMPLETE":
-		return "COMPLETED"
+		return "DONE"
 	default:
-		return "unknown"
+		return "STEP"
 	}
 }
 
