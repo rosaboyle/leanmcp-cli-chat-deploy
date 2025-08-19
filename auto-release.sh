@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Auto Release Script for MCLI
+# Auto Release Script for LeanMCP
 # Usage: ./auto-release.sh <version>
 # Example: ./auto-release.sh 1.0.1
 
@@ -15,7 +15,7 @@ YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
-echo -e "${BLUE}🚀 MCLI Auto Release Script${NC}"
+echo -e "${BLUE}🚀 LeanMCP Auto Release Script${NC}"
 echo "=============================="
 
 # Check if version is provided
@@ -97,4 +97,4 @@ echo ""
 echo -e "${YELLOW}⏱️  Release should be ready in 5-10 minutes${NC}"
 echo ""
 echo -e "${GREEN}🎉 Users can install with:${NC}"
-echo "brew tap rosaboyle/mcli && brew install mcli"
+echo "brew tap rosaboyle/leanmcp && brew install leanmcp"

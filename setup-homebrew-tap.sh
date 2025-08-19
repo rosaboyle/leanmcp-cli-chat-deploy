@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# Homebrew Tap Setup Script for MCLI
-# This creates the homebrew-mcli repository and formula
+# Homebrew Tap Setup Script for LeanMCP
+# This creates the homebrew-leanmcp repository and formula
 
 set -e
 
@@ -12,7 +12,7 @@ YELLOW='\033[1;33m'
 RED='\033[0;31m'
 NC='\033[0m'
 
-echo -e "${BLUE}🍺 Setting up Homebrew Tap for MCLI${NC}"
+echo -e "${BLUE}🍺 Setting up Homebrew Tap for LeanMCP${NC}"
 echo "=================================="
 
 # Get the latest release info from GitHub API
@@ -51,8 +51,8 @@ echo -e "${GREEN}✅ Checksums calculated${NC}"
 
 # Create formula
 echo -e "${BLUE}📝 Generating Homebrew formula...${NC}"
-cat > mcli.rb << EOF
-class Mcli < Formula
+cat > leanmcp.rb << EOF
+class Leanmcp < Formula
   desc "LeanMCP CLI - Manage projects and chats"
   homepage "https://github.com/rosaboyle/leanmcp-cli-chat-deploy"
   version "${VERSION}"
@@ -66,38 +66,38 @@ class Mcli < Formula
   end
 
   def install
-    bin.install "mcli-darwin-arm64" => "mcli" if OS.mac? && Hardware::CPU.arm?
-    bin.install "mcli-darwin-amd64" => "mcli" if OS.mac? && Hardware::CPU.intel?
+    bin.install "leanmcp-darwin-arm64" => "leanmcp" if OS.mac? && Hardware::CPU.arm?
+    bin.install "leanmcp-darwin-amd64" => "leanmcp" if OS.mac? && Hardware::CPU.intel?
   end
 
   test do
-    system "#{bin}/mcli", "version"
+    system "#{bin}/leanmcp", "version"
   end
 end
 EOF
 
-echo -e "${GREEN}✅ Formula created: mcli.rb${NC}"
+echo -e "${GREEN}✅ Formula created: leanmcp.rb${NC}"
 
 # Create README
 cat > TAP_README.md << 'EOF'
-# Homebrew Tap for MCLI
+# Homebrew Tap for LeanMCP
 
-This is the official Homebrew tap for MCLI (LeanMCP CLI).
+This is the official Homebrew tap for LeanMCP CLI.
 
 ## Installation
 
 ```bash
-brew tap rosaboyle/mcli
-brew install mcli
+brew tap rosaboyle/leanmcp
+brew install leanmcp
 ```
 
 ## Usage
 
 ```bash
-mcli --help
-mcli version
-mcli projects list
-mcli chats list
+leanmcp --help
+leanmcp version
+leanmcp projects list
+leanmcp chats list
 ```
 
 ## Repository
@@ -107,24 +107,24 @@ EOF
 
 echo ""
 echo -e "${YELLOW}🚀 Next Steps:${NC}"
-echo "1. Create a new GitHub repository named: ${BLUE}homebrew-mcli${NC}"
+echo "1. Create a new GitHub repository named: ${BLUE}homebrew-leanmcp${NC}"
 echo "2. Clone it and add these files:"
-echo "   - mcli.rb (generated above)"
+echo "   - leanmcp.rb (generated above)"
 echo "   - README.md (generated as TAP_README.md)"
 echo ""
 echo -e "${BLUE}📋 Quick setup commands:${NC}"
-echo "# After creating the GitHub repo homebrew-mcli:"
-echo "git clone https://github.com/rosaboyle/homebrew-mcli.git"
-echo "cd homebrew-mcli"
-echo "cp $(pwd)/mcli.rb ."
+echo "# After creating the GitHub repo homebrew-leanmcp:"
+echo "git clone https://github.com/rosaboyle/homebrew-leanmcp.git"
+echo "cd homebrew-leanmcp"
+echo "cp $(pwd)/leanmcp.rb ."
 echo "cp $(pwd)/TAP_README.md README.md"
 echo "git add ."
-echo 'git commit -m "Add mcli formula"'
+echo 'git commit -m "Add leanmcp formula"'
 echo "git push"
 echo ""
 echo -e "${GREEN}🎉 Then users can install with:${NC}"
-echo "brew tap rosaboyle/mcli && brew install mcli"
+echo "brew tap rosaboyle/leanmcp && brew install leanmcp"
 echo ""
 echo -e "${BLUE}📁 Files created in current directory:${NC}"
-echo "- mcli.rb (Homebrew formula)"
+echo "- leanmcp.rb (Homebrew formula)"
 echo "- TAP_README.md (README for tap repo)"
