@@ -15,7 +15,7 @@
 
 .leanmcp/
 config.json
-mcli
+leanmcp
 # LeanMCP CLI specific
 leanmcp-cli
 leanmcp-cli-*

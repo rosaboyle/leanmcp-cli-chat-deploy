@@ -29,8 +29,8 @@ jobs:
     - name: Calculate checksums
       id: checksums
       run: |
-        SHA256_AMD64=$(shasum -a 256 mcli-${{ steps.version.outputs.VERSION }}-darwin-amd64.tar.gz | cut -d' ' -f1)
-        SHA256_ARM64=$(shasum -a 256 mcli-${{ steps.version.outputs.VERSION }}-darwin-arm64.tar.gz | cut -d' ' -f1)
+        SHA256_AMD64=$(shasum -a 256 leanmcp-${{ steps.version.outputs.VERSION }}-darwin-amd64.tar.gz | cut -d' ' -f1)
+        SHA256_ARM64=$(shasum -a 256 leanmcp-${{ steps.version.outputs.VERSION }}-darwin-arm64.tar.gz | cut -d' ' -f1)
         echo "SHA256_AMD64=$SHA256_AMD64" >> $GITHUB_OUTPUT
         echo "SHA256_ARM64=$SHA256_ARM64" >> $GITHUB_OUTPUT
     
@@ -38,26 +38,26 @@ jobs:
       id: homebrew
       run: |
         cat > homebrew-formula.rb << EOF
-        class Mcli < Formula
+        class Leanmcp < Formula
           desc "LeanMCP CLI - Manage projects and chats"
           homepage "https://github.com/rosaboyle/leanmcp-cli-chat-deploy"
           version "${{ steps.version.outputs.VERSION }}"
 
           if OS.mac? && Hardware::CPU.arm?
-            url "https://github.com/rosaboyle/leanmcp-cli-chat-deploy/releases/download/v${{ steps.version.outputs.VERSION }}/mcli-${{ steps.version.outputs.VERSION }}-darwin-arm64.tar.gz"
+            url "https://github.com/rosaboyle/leanmcp-cli-chat-deploy/releases/download/v${{ steps.version.outputs.VERSION }}/leanmcp-${{ steps.version.outputs.VERSION }}-darwin-arm64.tar.gz"
             sha256 "${{ steps.checksums.outputs.SHA256_ARM64 }}"
           elsif OS.mac? && Hardware::CPU.intel?
-            url "https://github.com/rosaboyle/leanmcp-cli-chat-deploy/releases/download/v${{ steps.version.outputs.VERSION }}/mcli-${{ steps.version.outputs.VERSION }}-darwin-amd64.tar.gz"
+            url "https://github.com/rosaboyle/leanmcp-cli-chat-deploy/releases/download/v${{ steps.version.outputs.VERSION }}/leanmcp-${{ steps.version.outputs.VERSION }}-darwin-amd64.tar.gz"
             sha256 "${{ steps.checksums.outputs.SHA256_AMD64 }}"
           end
 
           def install
-            bin.install "mcli-darwin-arm64" => "mcli" if OS.mac? && Hardware::CPU.arm?
-            bin.install "mcli-darwin-amd64" => "mcli" if OS.mac? && Hardware::CPU.intel?
+            bin.install "leanmcp-darwin-arm64" => "leanmcp" if OS.mac? && Hardware::CPU.arm?
+            bin.install "leanmcp-darwin-amd64" => "leanmcp" if OS.mac? && Hardware::CPU.intel?
           end
 
           test do
-            system "#{bin}/mcli", "version"
+            system "#{bin}/leanmcp", "version"
           end
         end
         EOF
@@ -66,20 +66,20 @@ jobs:
       uses: softprops/action-gh-release@v1
       with:
         files: |
-          mcli-${{ steps.version.outputs.VERSION }}-darwin-amd64.tar.gz
-          mcli-${{ steps.version.outputs.VERSION }}-darwin-arm64.tar.gz
+          leanmcp-${{ steps.version.outputs.VERSION }}-darwin-amd64.tar.gz
+          leanmcp-${{ steps.version.outputs.VERSION }}-darwin-arm64.tar.gz
         body: |
-          ## MCLI v${{ steps.version.outputs.VERSION }}
+          ## LeanMCP v${{ steps.version.outputs.VERSION }}
           
           🚀 **Installation via Homebrew:**
           ```bash
-          brew tap rosaboyle/mcli
-          brew install mcli
+          brew tap rosaboyle/leanmcp
+          brew install leanmcp
           ```
           
           📦 **Manual Download:**
-          - macOS Intel: mcli-${{ steps.version.outputs.VERSION }}-darwin-amd64.tar.gz
-          - macOS Apple Silicon: mcli-${{ steps.version.outputs.VERSION }}-darwin-arm64.tar.gz
+          - macOS Intel: leanmcp-${{ steps.version.outputs.VERSION }}-darwin-amd64.tar.gz
+          - macOS Apple Silicon: leanmcp-${{ steps.version.outputs.VERSION }}-darwin-arm64.tar.gz
           
           🍺 **Homebrew Formula (for tap repository):**
           ```ruby

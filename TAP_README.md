@@ -1,21 +1,21 @@
-# Homebrew Tap for MCLI
+# Homebrew Tap for LeanMCP
 
-This is the official Homebrew tap for MCLI (LeanMCP CLI).
+This is the official Homebrew tap for LeanMCP CLI.
 
 ## Installation
 
 ```bash
-brew tap rosaboyle/mcli
-brew install mcli
+brew tap rosaboyle/leanmcp
+brew install leanmcp
 ```
 
 ## Usage
 
 ```bash
-mcli --help
-mcli version
-mcli projects list
-mcli chats list
+leanmcp --help
+leanmcp version
+leanmcp projects list
+leanmcp chats list
 ```
 
 ## Repository

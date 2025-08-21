@@ -1,4 +1,4 @@
-# LeanMCP CLI (`leanmcp-cli` / `lcli`)
+# LeanMCP CLI (`leanmcp`)
 
 A command-line interface for interacting with LeanMCP APIs. Manage your projects, chats, deployments, and API keys from the terminal.
 
@@ -8,9 +8,9 @@ A command-line interface for interacting with LeanMCP APIs. Manage your projects
 
 ```bash
 git clone <repository-url>
-cd leanmcp-cli
+cd leanmcp-cli-chat-deploy
 go mod tidy
-go build -o leanmcp-cli .
+make build
 ```
 
 ### Create Alias (Optional)
@@ -18,7 +18,7 @@ go build -o leanmcp-cli .
 Add this to your shell profile (`.bashrc`, `.zshrc`, etc.):
 
 ```bash
-alias lcli='leanmcp-cli'
+alias lcli='leanmcp'
 ```
 
 ## 🔐 Authentication
@@ -26,97 +26,97 @@ alias lcli='leanmcp-cli'
 Before using the CLI, you need to authenticate with your API key:
 
 ```bash
-leanmcp-cli auth login --api-key airtrain_your_key_here
+leanmcp auth login --api-key airtrain_your_key_here
 ```
 
-Your API key will be securely stored in `~/.leanmcp-cli/config.yaml`.
+Your API key will be securely stored in `~/.leanmcp/config.yaml`.
 
 ### Authentication Commands
 
 ```bash
 # Login with API key
-leanmcp-cli auth login --api-key <your-key>
+leanmcp auth login --api-key <your-key>
 
 # Check authentication status
-leanmcp-cli auth whoami
+leanmcp auth whoami
 
 # Test API connection
-leanmcp-cli auth status
+leanmcp auth status
 
 # Logout (remove stored credentials)
-leanmcp-cli auth logout
+leanmcp auth logout
 ```
 
 ## 📋 Project Management
 
 ```bash
 # List all projects
-leanmcp-cli projects list
+leanmcp projects list
 
 # Show project details
-leanmcp-cli projects show <project-id>
+leanmcp projects show <project-id>
 
 # Create a new project
-leanmcp-cli projects create --name "My Project" --description "Optional description"
+leanmcp projects create --name "My Project" --description "Optional description"
 
 # Delete a project (requires --force)
-leanmcp-cli projects delete <project-id> --force
+leanmcp projects delete <project-id> --force
 
 # List project builds
-leanmcp-cli projects builds <project-id>
+leanmcp projects builds <project-id>
 
 # Start a new build
-leanmcp-cli projects build <project-id>
+leanmcp projects build <project-id>
 ```
 
 ## 💬 Chat Management
 
 ```bash
 # List all chats
-leanmcp-cli chats list
+leanmcp chats list
 
 # Show chat details
-leanmcp-cli chats show <chat-id>
+leanmcp chats show <chat-id>
 
 # Show chat message history
-leanmcp-cli chats history <chat-id>
+leanmcp chats history <chat-id>
 
 # Limit message history
-leanmcp-cli chats history <chat-id> --limit 10
+leanmcp chats history <chat-id> --limit 10
 
 # Create a new chat
-leanmcp-cli chats create --title "My Chat" --model "gpt-4"
+leanmcp chats create --title "My Chat" --model "gpt-4"
 
 # Delete a chat (requires --force)
-leanmcp-cli chats delete <chat-id> --force
+leanmcp chats delete <chat-id> --force
 ```
 
 ## 🔑 API Key Management
 
 ```bash
 # List current API key info
-leanmcp-cli api-keys list
+leanmcp api-keys list
 
 # Show detailed API key information
-leanmcp-cli api-keys info
+leanmcp api-keys info
 ```
 
 ## 🚀 Deployments
 
 ```bash
 # List deployments (coming soon)
-leanmcp-cli deployments list
+leanmcp deployments list
 
 # Show deployment details (coming soon)
-leanmcp-cli deployments show <deployment-id>
+leanmcp deployments show <deployment-id>
 
 # Show deployment logs (coming soon)
-leanmcp-cli deployments logs <deployment-id>
+leanmcp deployments logs <deployment-id>
 ```
 
 ## ⚙️ Configuration
 
-The CLI stores configuration in `~/.leanmcp-cli/config.yaml`:
+The CLI stores configuration in `~/.leanmcp/config.yaml`:
 
 ```yaml
 api_key: "encrypted_key_here"
@@ -129,7 +129,7 @@ base_url: "https://api.leanmcp.ai"
 ### Global Flags
 
 ```bash
---config string     config file (default is $HOME/.leanmcp-cli/config.yaml)
+--config string     config file (default is $HOME/.leanmcp/config.yaml)
 --base-url string   API base URL (default: https://api.leanmcp.ai)
 --verbose, -v       verbose output
 ```
@@ -149,7 +149,7 @@ The CLI provides clean, colorized output with:
 ### Project Structure
 
 ```
-leanmcp-cli/
+leanmcp/
 ├── cmd/                 # Cobra commands
 │   ├── root.go         # Root command
 │   ├── auth.go         # Authentication commands
@@ -171,15 +171,15 @@ leanmcp-cli/
 
 ```bash
 # Development build
-go build -o leanmcp-cli .
+go build -o leanmcp .
 
 # Run tests
 go test ./...
 
 # Cross-platform builds
-GOOS=linux GOARCH=amd64 go build -o leanmcp-cli-linux-amd64 .
-GOOS=darwin GOARCH=amd64 go build -o leanmcp-cli-darwin-amd64 .
-GOOS=windows GOARCH=amd64 go build -o leanmcp-cli-windows-amd64.exe .
+GOOS=linux GOARCH=amd64 go build -o leanmcp-linux-amd64 .
+GOOS=darwin GOARCH=amd64 go build -o leanmcp-darwin-amd64 .
+GOOS=windows GOARCH=amd64 go build -o leanmcp-windows-amd64.exe .
 ```
 
 ## 📄 License
