@@ -2,7 +2,7 @@
 
 A command-line interface for interacting with LeanMCP APIs. Manage your projects, chats, deployments, and API keys from the terminal.
 
-## 🚀 Installation
+##  Installation
 
 ### Build from Source
 
@@ -101,7 +101,7 @@ leanmcp api-keys list
 leanmcp api-keys info
 ```
 
-## 🚀 Deployments
+##  Deployments
 
 ```bash
 # List deployments (coming soon)

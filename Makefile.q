@@ -48,7 +48,7 @@ build-all: clean
 
 # Development run
 run: build
-	@echo "🚀 Running CLI..."
+	@echo " Running CLI..."
 	./leanmcp-cli
 
 # Show help

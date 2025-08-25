@@ -10,7 +10,7 @@ VERSION=${1:-"1.0.0"}
 REPO_OWNER="rosaboyle"  # Your GitHub username
 REPO_NAME="leanmcp-cli-chat-deploy"  # Your existing repo name
 
-echo "🚀 Creating release for leanmcp v${VERSION}"
+echo " Creating release for leanmcp v${VERSION}"
 
 # Check if version is provided
 if [ -z "$1" ]; then

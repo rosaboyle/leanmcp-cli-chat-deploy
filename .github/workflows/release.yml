@@ -71,7 +71,7 @@ jobs:
         body: |
           ## LeanMCP v${{ steps.version.outputs.VERSION }}
           
-          🚀 **Installation via Homebrew:**
+           **Installation via Homebrew:**
           ```bash
           brew tap rosaboyle/leanmcp
           brew install leanmcp

@@ -15,7 +15,7 @@ YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
-echo -e "${BLUE}🚀 LeanMCP Auto Release Script${NC}"
+echo -e "${BLUE} LeanMCP Auto Release Script${NC}"
 echo "=============================="
 
 # Check if version is provided
@@ -87,7 +87,7 @@ echo ""
 echo -e "${BLUE}📋 What happens next:${NC}"
 echo "1. 🔨 GitHub Actions will build the binaries"
 echo "2. 📦 Create release packages (.tar.gz files)"
-echo "3. 🚀 Create GitHub release with download links"
+echo "3.  Create GitHub release with download links"
 echo "4. 🍺 Generate Homebrew formula automatically"
 echo ""
 echo -e "${BLUE}🔗 Monitor the release:${NC}"

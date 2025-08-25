@@ -52,7 +52,7 @@ release: build-homebrew
 
 # Development run
 run: build
-	@echo "🚀 Running leanmcp..."
+	@echo " Running leanmcp..."
 	./leanmcp
 
 # Show help

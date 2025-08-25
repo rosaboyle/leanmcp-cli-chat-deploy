@@ -17,7 +17,7 @@ var deploymentsListCmd = &cobra.Command{
 	Short: "List deployments",
 	Long:  "List all deployments associated with your account",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		fmt.Println("🚀 Deployments feature coming soon...")
+		fmt.Println(" Deployments feature coming soon...")
 		fmt.Println("This command will list all your deployments.")
 		return nil
 	},

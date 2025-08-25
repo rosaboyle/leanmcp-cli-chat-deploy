@@ -106,7 +106,7 @@ Source code: https://github.com/rosaboyle/leanmcp-cli-chat-deploy
 EOF
 
 echo ""
-echo -e "${YELLOW}🚀 Next Steps:${NC}"
+echo -e "${YELLOW} Next Steps:${NC}"
 echo "1. Create a new GitHub repository named: ${BLUE}homebrew-leanmcp${NC}"
 echo "2. Clone it and add these files:"
 echo "   - leanmcp.rb (generated above)"

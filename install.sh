@@ -4,7 +4,7 @@
 
 set -e
 
-echo "🚀 Installing LeanMCP CLI..."
+echo " Installing LeanMCP CLI..."
 
 # Build the CLI
 echo "📦 Building CLI..."
