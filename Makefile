@@ -9,10 +9,15 @@ VERSION ?= 1.0.0
 # Default target
 all: build
 
-# Build the CLI as leanmcp
+# Detect OS-specific binary name
+BINARY_NAME = leanmcp
+ifeq ($(OS),Windows_NT)
+    BINARY_NAME := leanmcp.exe
+endif
+
 build:
-	@echo "🔨 Building leanmcp..."
-	go build -ldflags "-X 'github.com/ddod/leanmcp-cli/cmd.Version=$(VERSION)'" -o leanmcp .
+	@echo "🔨 Building $(BINARY_NAME)..."
+	go build -ldflags "-X github.com/ddod/leanmcp-cli/cmd.Version=$(VERSION)" -o $(BINARY_NAME) .
 	@echo "✅ Build complete! Version: $(VERSION)"
 
 # Clean build artifacts
